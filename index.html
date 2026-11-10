@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Seguimiento de actividades · Segundo parcial</title>
+  <style>
+    :root {
+      --ink: #182533;
+      --navy: #0f2030;
+      --navy-2: #18334a;
+      --paper: #f4f3ee;
+      --white: #ffffff;
+      --muted: #697783;
+      --line: #e5e8e5;
+      --orange: #ed6a2c;
+      --orange-soft: #fff0e6;
+      --teal: #168276;
+      --teal-soft: #e4f4f0;
+      --blue: #397cb3;
+      --blue-soft: #e8f1f8;
+      --gold: #b7791f;
+      --gold-soft: #fff5dc;
+      --red: #b6473f;
+      --red-soft: #fff0ed;
+      --shadow: 0 16px 40px rgba(24, 37, 51, .07);
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(237, 106, 44, .055), transparent 24rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .page { width: min(1440px, 100%); margin: 0 auto; padding: 22px 30px 36px; }
+
+    /* Encabezado */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 330px;
+      padding: 25px 34px 0;
+      color: #fff;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 82% 42%, rgba(237, 106, 44, .17), transparent 15rem),
+        linear-gradient(120deg, #0c1a28 0%, #12283a 60%, #19354a 100%);
+      box-shadow: 0 20px 48px rgba(15, 32, 48, .15);
+    }
+    .hero::before {
+      position: absolute; inset: 0; content: ""; pointer-events: none; opacity: .16;
+      background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(90deg, black, transparent 85%);
+    }
+    .hero::after {
+      position: absolute; width: 330px; height: 330px; border: 1px solid rgba(255,255,255,.09);
+      border-radius: 50%; content: ""; right: 40px; top: 58px; pointer-events: none;
+      box-shadow: 0 0 0 28px rgba(255,255,255,.025), 0 0 0 58px rgba(255,255,255,.02);
+    }
+    .topline, .hero-main, .hero-foot { position: relative; z-index: 1; }
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 11px; color: rgba(255,255,255,.82); font-size: 11px; font-weight: 800; letter-spacing: .16em; }
+    .brand-mark {
+      display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px;
+      color: #fff; background: var(--orange); font-size: 12px; letter-spacing: .04em;
+      box-shadow: 0 5px 18px rgba(237,106,44,.3);
+    }
+    .report-tag { color: rgba(255,255,255,.65); font-size: 11px; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; }
+    .hero-print { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; border: 1px solid rgba(255,255,255,.2); border-radius: 9px; color: #fff; background: rgba(255,255,255,.07); font-size: 10px; font-weight: 750; }
+    .hero-print:hover { border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.13); }
+    .hero-main { display: grid; grid-template-columns: minmax(0,1fr) 290px; align-items: center; gap: 25px; padding: 27px 0 23px; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; color: #ffb185; font-size: 11px; font-weight: 850; letter-spacing: .15em; text-transform: uppercase; }
+    .eyebrow-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff8a50; box-shadow: 0 0 0 5px rgba(255,138,80,.13); }
+    h1 { max-width: 760px; margin: 0; font-size: clamp(36px, 5vw, 60px); line-height: .99; letter-spacing: -.055em; font-weight: 760; }
+    h1 span { color: #ff9b68; }
+    .hero-copy > p { max-width: 660px; margin: 17px 0 18px; color: rgba(255,255,255,.72); font-size: 15px; }
+    .hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+    .meta-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; color: rgba(255,255,255,.83); background: rgba(255,255,255,.055); font-size: 11px; font-weight: 650; }
+    .meta-pill .meta-mark { color: #ff9b68; font-size: 14px; }
+    .hero-visual { position: relative; display: grid; place-items: center; min-height: 205px; }
+    .score-orbit {
+      --fill: 90%; position: relative; display: grid; place-items: center; width: 190px; height: 190px; border-radius: 50%;
+      background: conic-gradient(#ff8a50 0 var(--fill), rgba(255,255,255,.14) var(--fill) 100%);
+      box-shadow: 0 0 42px rgba(237,106,44,.16);
+    }
+    .score-orbit::before { position: absolute; inset: 11px; border: 1px solid rgba(255,255,255,.1); border-radius: inherit; content: ""; background: #12283a; }
+    .orbit-copy { position: relative; display: flex; flex-direction: column; align-items: center; }
+    .orbit-copy strong { font-size: 39px; line-height: 1; letter-spacing: -.06em; }
+    .orbit-copy span { margin-top: 7px; color: rgba(255,255,255,.7); font-size: 11px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+    .orbit-copy small { margin-top: 2px; color: #ffb185; font-size: 13px; font-weight: 700; }
+    .orbit-badge { position: absolute; right: -17px; bottom: 17px; padding: 9px 12px; border: 1px solid rgba(255,255,255,.16); border-radius: 13px; background: #203e54; box-shadow: 0 10px 24px rgba(0,0,0,.16); }
+    .orbit-badge b { display: block; font-size: 15px; line-height: 1.15; }
+    .orbit-badge span { color: rgba(255,255,255,.68); font-size: 10px; }
+    .hero-foot { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0 14px; border-top: 1px solid rgba(255,255,255,.13); color: rgba(255,255,255,.61); font-size: 10px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+
+    main { padding-top: 18px; }
+    .privacy-note {
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 15px; margin-bottom: 15px;
+      border: 1px solid #f2d3be; border-radius: 14px; color: #67402d; background: #fff8f1; font-size: 12px;
+    }
+    .privacy-icon { flex: 0 0 auto; display: grid; place-items: center; width: 23px; height: 23px; border-radius: 50%; color: #fff; background: var(--orange); font-weight: 850; }
+    .privacy-note b { color: #51301f; }
+
+    /* Indicadores */
+    .metric-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 13px; margin-bottom: 18px; }
+    .metric {
+      min-height: 127px; padding: 17px 18px; border: 1px solid #e8e7e1; border-radius: 17px; background: rgba(255,255,255,.86);
+      box-shadow: 0 8px 25px rgba(24,37,51,.035);
+    }
+    .metric-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 11px; font-weight: 730; }
+    .metric-symbol { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 9px; color: var(--orange); background: var(--orange-soft); font-size: 11px; font-weight: 900; }
+    .metric:nth-child(2) .metric-symbol { color: var(--blue); background: var(--blue-soft); }
+    .metric:nth-child(3) .metric-symbol { color: var(--teal); background: var(--teal-soft); }
+    .metric:nth-child(4) .metric-symbol { color: var(--gold); background: var(--gold-soft); }
+    .metric:nth-child(5) .metric-symbol { color: var(--red); background: var(--red-soft); }
+    .metric-value { margin-top: 9px; color: var(--ink); font-size: 31px; line-height: 1; font-weight: 780; letter-spacing: -.045em; }
+    .metric-value small { color: var(--muted); font-size: 14px; font-weight: 650; letter-spacing: 0; }
+    .metric-note { margin-top: 7px; color: var(--muted); font-size: 11px; }
+
+    /* Paneles y gráficas */
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(290px, .83fr); align-items: start; gap: 16px; }
+    .panel { border: 1px solid #e6e7e2; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
+    .activity-panel { padding: 21px 22px 16px; }
+    .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .section-kicker { display: block; margin-bottom: 5px; color: var(--orange); font-size: 10px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; }
+    h2 { margin: 0; color: var(--ink); font-size: 21px; letter-spacing: -.035em; line-height: 1.15; }
+    .panel-desc { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
+    .quiet-button, .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 37px; padding: 8px 12px;
+      border: 1px solid #dce1e3; border-radius: 10px; color: var(--ink); background: #fff; font-size: 11px; font-weight: 750;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .quiet-button:hover, .button:hover { transform: translateY(-1px); border-color: #b8c5cd; box-shadow: 0 5px 14px rgba(24,37,51,.08); }
+    .activity-key { display: flex; flex-wrap: wrap; gap: 14px; margin: 3px 0 10px; color: var(--muted); font-size: 10px; }
+    .key-dot { display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 50%; background: var(--teal); vertical-align: 0; }
+    .key-zero { display: inline-grid; place-items: center; width: 15px; height: 15px; margin-right: 4px; border: 1px solid #f1b6aa; border-radius: 5px; color: var(--red); background: var(--red-soft); font-size: 8px; font-weight: 850; vertical-align: -2px; }
+    .activity-chart { display: grid; gap: 3px; }
+    .activity-row {
+      display: grid; grid-template-columns: 27px minmax(145px, 215px) minmax(90px, 1fr) 46px 58px; align-items: center; gap: 10px;
+      width: 100%; min-height: 31px; padding: 4px 7px; border: 1px solid transparent; border-radius: 9px; text-align: left; background: transparent;
+    }
+    .activity-row:hover { background: #f7f9f8; }
+    .activity-row.is-selected { border-color: #f4c4a7; background: #fff7f1; }
+    .activity-index { color: #98a2a8; font-size: 10px; font-weight: 750; text-align: center; }
+    .activity-copy { min-width: 0; }
+    .activity-copy b { display: block; overflow: hidden; color: #2b3944; font-size: 11px; font-weight: 720; text-overflow: ellipsis; white-space: nowrap; }
+    .activity-copy small { display: block; margin-top: 1px; color: #9aa3a6; font-size: 9px; }
+    .activity-track { height: 8px; overflow: hidden; border-radius: 99px; background: #edf0ed; }
+    .activity-fill { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #54a99a, #168276); transition: width .35s ease; }
+    .activity-row.is-selected .activity-fill { background: linear-gradient(90deg, #ffad7c, var(--orange)); }
+    .activity-average { color: #344651; font-size: 11px; font-weight: 820; text-align: right; }
+    .zero-chip { display: inline-flex; justify-content: center; min-width: 54px; padding: 3px 5px; border-radius: 6px; color: #778289; background: #f1f3f2; font-size: 9px; font-weight: 720; white-space: nowrap; }
+    .zero-chip.has-zeros { color: var(--red); background: var(--red-soft); }
+    .chart-foot { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; padding-top: 11px; border-top: 1px solid #eef0ed; color: var(--muted); font-size: 10px; }
+    .chart-foot strong { color: var(--ink); }
+    .sidebar { display: grid; gap: 15px; }
+    .distribution-panel { padding: 20px; }
+    .distribution-panel h2 { font-size: 19px; }
+    .distribution-panel .panel-desc { margin-bottom: 14px; }
+    .range-list { display: grid; gap: 8px; }
+    .range-row {
+      display: grid; grid-template-columns: 82px minmax(42px,1fr) 25px 42px; align-items: center; gap: 8px;
+      width: 100%; padding: 7px 8px; border: 1px solid transparent; border-radius: 9px; text-align: left; background: #fafbf9;
+    }
+    .range-row:hover { border-color: #d6e1dd; background: #f5f9f7; }
+    .range-row.is-active { border-color: #99c9bd; background: #eff8f5; }
+    .range-label { color: #4d5b65; font-size: 10px; font-weight: 750; }
+    .range-track { height: 7px; overflow: hidden; border-radius: 99px; background: #e9eeeb; }
+    .range-fill { display: block; height: 100%; border-radius: inherit; background: #7eb9ad; }
+    .range-row[data-filter="lt50"] .range-fill { background: #dc8069; }
+    .range-row[data-filter="50-59"] .range-fill { background: #dfa453; }
+    .range-count { color: var(--ink); font-size: 12px; font-weight: 850; text-align: right; }
+    .range-pct { color: #89949a; font-size: 9px; text-align: right; }
+    .insight-panel { padding: 19px 20px; }
+    .insight-panel h2 { margin-bottom: 12px; font-size: 18px; }
+    .insight { display: grid; grid-template-columns: 34px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid #eef0ed; }
+    .insight:first-of-type { border-top: 0; padding-top: 0; }
+    .insight-mark { display: grid; place-items: center; width: 31px; height: 31px; border-radius: 9px; color: var(--orange); background: var(--orange-soft); font-size: 10px; font-weight: 900; }
+    #perfectInsight .insight-mark { color: var(--teal); background: var(--teal-soft); }
+    #zeroInsight .insight-mark { color: var(--blue); background: var(--blue-soft); }
+    #absenceInsight .insight-mark { color: var(--red); background: var(--red-soft); }
+    .insight b { display: block; margin-bottom: 3px; color: #2b3944; font-size: 11px; }
+    .insight p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+
+    /* Lista matricial: nombres fijos y calificaciones desplazables */
+    .student-panel { margin-top: 17px; overflow: hidden; }
+    .student-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; padding: 21px 22px 14px; }
+    .student-head h2 { font-size: 22px; }
+    .student-head p { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+    .student-head-right { display: flex; align-items: center; gap: 8px; }
+    .count-label { color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .filters { display: grid; grid-template-columns: minmax(190px,1.35fr) minmax(145px,.8fr) minmax(125px,.72fr) minmax(200px,1.2fr) auto; gap: 9px; padding: 0 22px 14px; }
+    .field { min-width: 0; }
+    .field label { display: block; margin: 0 0 5px 2px; color: #7a858b; font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .control { width: 100%; min-height: 39px; padding: 8px 10px; border: 1px solid #dfe4e2; border-radius: 9px; outline: none; color: var(--ink); background: #fff; font-size: 11px; }
+    .control:focus { border-color: #7ab5aa; box-shadow: 0 0 0 3px rgba(22,130,118,.1); }
+    .filter-actions { display: flex; align-items: end; gap: 7px; }
+    .clear-button { min-width: 96px; }
+    .table-wrap { max-height: 630px; overflow: auto; border-top: 1px solid #e8ebe8; scrollbar-gutter: stable; }
+    table { width: max-content; min-width: 100%; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; }
+    thead th { position: sticky; z-index: 3; top: 0; padding: 10px 8px; color: #62717a; background: #f7f8f6; border-bottom: 1px solid #e5e9e6; font-size: 9px; font-weight: 850; letter-spacing: .06em; text-align: center; text-transform: uppercase; vertical-align: bottom; }
+    thead th.name-heading { left: 0; z-index: 6; width: 260px; min-width: 260px; max-width: 260px; text-align: left; box-shadow: 7px 0 11px rgba(24,37,51,.075); }
+    thead th.activity-heading { width: 180px; min-width: 180px; max-width: 180px; text-transform: none; letter-spacing: 0; transition: background .15s ease; }
+    .activity-head-name { display: block; color: #344650; font-size: 9px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+    .activity-heading small { display: block; margin-top: 4px; color: #879399; font-size: 8px; font-weight: 600; white-space: nowrap; }
+    thead th.activity-heading.is-selected { color: #a14f21; background: #fff2e8; box-shadow: inset 0 -3px 0 var(--orange); }
+    thead th.activity-heading.is-selected .activity-head-name { color: #a14f21; }
+    thead th.final-heading { width: 116px; min-width: 116px; background: #edf3f4; color: #294b58; }
+    thead th.final-heading small { display: block; margin-top: 3px; font-size: 8px; letter-spacing: .02em; text-transform: none; }
+    tbody td { padding: 7px 8px; border-bottom: 1px solid #edf0ed; color: #3f4d56; background: #fff; font-size: 11px; text-align: center; }
+    tbody tr:nth-child(even) td { background: #fbfcfa; }
+    tbody tr:hover td { background: #f3f9f6; }
+    tbody td.name-sticky { position: sticky; left: 0; z-index: 2; width: 260px; min-width: 260px; max-width: 260px; padding: 7px 10px; text-align: left; box-shadow: 7px 0 11px rgba(24,37,51,.065); }
+    tbody tr:nth-child(even) td.name-sticky { background: #fbfcfa; }
+    tbody tr:hover td.name-sticky { background: #f3f9f6; }
+    tbody td.activity-cell { width: 180px; min-width: 180px; max-width: 180px; }
+    tbody td.activity-cell.selected-column { background: #fffaf5; }
+    tbody tr:hover td.activity-cell.selected-column { background: #fff3e9; }
+    tbody td.final-grade-cell { width: 116px; min-width: 116px; background: #f3f7f7; }
+    tbody tr:nth-child(even) td.final-grade-cell { background: #eef4f4; }
+    tbody tr:hover td.final-grade-cell { background: #e8f3ef; }
+    thead th.absence-heading { width: 92px; min-width: 92px; color: #7a423d; background: #fff1ee; }
+    tbody td.absence-cell { width: 92px; min-width: 92px; background: #fff9f7; }
+    tbody tr:nth-child(even) td.absence-cell { background: #fff5f2; }
+    tbody tr:hover td.absence-cell { background: #ffece7; }
+    .absence-pill { display: inline-grid; place-items: center; min-width: 35px; padding: 5px 8px; border-radius: 7px; color: #257466; background: #e5f5ed; font-size: 10px; font-weight: 850; }
+    .absence-pill.some { color: #9b671c; background: var(--gold-soft); }
+    .absence-pill.high { color: #a64336; background: var(--red-soft); }
+    .person-cell { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .student-id { display: inline-grid; flex: 0 0 31px; place-items: center; width: 31px; height: 31px; border-radius: 9px; color: #65757e; background: #f0f3f1; font-size: 9px; font-weight: 850; }
+    .person-name { color: #263640; font-size: 10px; font-weight: 740; line-height: 1.2; overflow-wrap: anywhere; white-space: normal; }
+    .grid-score { display: inline-grid; place-items: center; min-width: 39px; padding: 5px 7px; border-radius: 7px; color: #52636b; background: #f0f3f2; font-size: 10px; font-weight: 800; }
+    .grid-score.zero { color: #a64336; background: var(--red-soft); }
+    .grid-score.perfect { color: #1b7468; background: #e5f5ed; }
+    .score-pill { display: inline-flex; align-items: baseline; justify-content: center; min-width: 67px; padding: 6px 8px; border-radius: 8px; color: #35645c; background: var(--teal-soft); font-weight: 850; }
+    .score-pill small { margin-left: 2px; color: #668078; font-size: 9px; font-weight: 650; }
+    .score-pill.low { color: #a64336; background: var(--red-soft); }
+    .score-pill.mid { color: #9b671c; background: var(--gold-soft); }
+    .score-pill.max { color: #1b7468; background: #d9f1e9; }
+    .empty-state { padding: 32px 15px; color: var(--muted); text-align: center; font-size: 12px; }
+    .table-foot { display: flex; justify-content: space-between; gap: 15px; padding: 11px 18px; border-top: 1px solid #e8ebe8; color: #77848a; background: #fbfcfa; font-size: 10px; }
+
+    /* Auditoría y pie */
+    .audit-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-top: 15px; }
+    .audit-card { display: flex; align-items: flex-start; gap: 10px; padding: 14px; border: 1px solid #e4e8e3; border-radius: 14px; background: rgba(255,255,255,.74); }
+    .audit-check { display: grid; flex: 0 0 24px; place-items: center; width: 24px; height: 24px; border-radius: 50%; color: var(--teal); background: var(--teal-soft); font-size: 12px; font-weight: 900; }
+    .audit-card b { display: block; color: #30434c; font-size: 10px; }
+    .audit-card p { margin: 4px 0 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding: 20px 2px 0; color: #849096; font-size: 10px; }
+    footer strong { color: #5b6970; }
+
+    @media (max-width: 1050px) {
+      .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .dashboard-grid { grid-template-columns: minmax(0,1.3fr) minmax(270px,.8fr); }
+      .filters { grid-template-columns: minmax(160px,1.2fr) minmax(130px,.85fr) minmax(110px,.7fr) minmax(165px,1.15fr); }
+      .filter-actions { grid-column: 1 / -1; justify-content: flex-end; }
+      .activity-row { grid-template-columns: 24px minmax(125px,190px) minmax(65px,1fr) 42px 54px; gap: 7px; }
+    }
+    @media (max-width: 800px) {
+      .page { padding: 15px 16px 28px; }
+      .hero { padding: 20px 23px 0; }
+      .hero-main { grid-template-columns: minmax(0,1fr) 190px; gap: 10px; }
+      .score-orbit { width: 155px; height: 155px; }
+      .orbit-copy strong { font-size: 32px; }
+      .hero::after { right: -20px; }
+      .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .sidebar { grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; }
+      .insight-panel { grid-column: 1 / -1; }
+      .student-head { align-items: flex-start; }
+      thead th.name-heading, tbody td.name-sticky { width: 235px; min-width: 235px; max-width: 235px; }
+      thead th.activity-heading, tbody td.activity-cell { width: 160px; min-width: 160px; max-width: 160px; }
+      thead th.absence-heading, tbody td.absence-cell { width: 82px; min-width: 82px; }
+      .audit-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page { padding: 9px 9px 22px; }
+      .hero { min-height: auto; padding: 16px 17px 0; border-radius: 19px; }
+      .topline { align-items: flex-start; }
+      .brand { font-size: 9px; }
+      .brand-mark { width: 33px; height: 33px; }
+      .report-tag { max-width: 130px; padding-top: 4px; font-size: 9px; text-align: right; }
+      .hero-main { grid-template-columns: 1fr; padding: 24px 0 16px; }
+      h1 { font-size: clamp(37px, 11vw, 51px); }
+      .hero-copy > p { font-size: 13px; }
+      .hero-visual { position: absolute; right: -7px; top: 102px; min-height: 0; opacity: .2; pointer-events: none; }
+      .score-orbit { width: 135px; height: 135px; }
+      .hero-foot { flex-wrap: wrap; font-size: 8px; }
+      .privacy-note { padding: 11px; font-size: 10px; }
+      .metric-grid { gap: 8px; margin-bottom: 11px; }
+      .metric { min-height: 112px; padding: 13px; }
+      .metric-value { font-size: 27px; }
+      .metric-note { font-size: 10px; }
+      .activity-panel, .distribution-panel, .insight-panel { padding: 16px 13px; }
+      .panel-head { align-items: flex-start; }
+      h2 { font-size: 19px; }
+      .panel-desc { font-size: 11px; }
+      .quiet-button { min-height: 34px; padding: 7px 8px; font-size: 9px; }
+      .activity-row { grid-template-columns: 24px minmax(0,1fr) auto; grid-template-areas: "num name val" "num meter zero"; row-gap: 4px; min-height: 43px; padding: 5px 4px; }
+      .activity-index { grid-area: num; }
+      .activity-copy { grid-area: name; }
+      .activity-track { grid-area: meter; }
+      .activity-average { grid-area: val; }
+      .zero-chip { grid-area: zero; min-width: 49px; font-size: 8px; }
+      .activity-copy b { font-size: 10px; }
+      .activity-copy small { font-size: 8px; }
+      .sidebar { grid-template-columns: 1fr; }
+      .insight-panel { grid-column: auto; }
+      .range-row { grid-template-columns: 77px minmax(35px,1fr) 22px 38px; }
+      .student-panel { border-radius: 15px; }
+      .student-head { display: block; padding: 17px 14px 11px; }
+      .student-head-right { justify-content: flex-start; margin-top: 11px; }
+      thead th.name-heading, tbody td.name-sticky { width: 205px; min-width: 205px; max-width: 205px; }
+      thead th.activity-heading, tbody td.activity-cell { width: 145px; min-width: 145px; max-width: 145px; }
+      thead th.absence-heading, tbody td.absence-cell { width: 76px; min-width: 76px; }
+      .filters { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; padding: 0 13px 12px; }
+      .field:first-child { grid-column: 1 / -1; }
+      .filter-actions { grid-column: 1 / -1; justify-content: stretch; }
+      .filter-actions button { flex: 1; }
+      .control { min-height: 37px; font-size: 10px; }
+      .table-foot { flex-direction: column; gap: 5px; padding: 10px 12px; }
+      .detail-summary { grid-template-columns: repeat(3,1fr); gap: 6px; }
+      .detail-stat { padding: 9px; }
+      .detail-stat b { font-size: 16px; }
+      .detail-list { grid-template-columns: 1fr; }
+      footer { font-size: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+    @media print {
+      :root { --paper: #fff; }
+      body { background: #fff; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .page { width: 100%; padding: 0; }
+      .hero { min-height: 0; padding: 15px 20px 0; border-radius: 0; box-shadow: none; }
+      .hero-main { padding: 18px 0; grid-template-columns: 1fr 180px; }
+      h1 { font-size: 39px; }
+      .hero::after { display: none; }
+      .hero-visual { min-height: 160px; }
+      .score-orbit { width: 140px; height: 140px; }
+      .privacy-note, .filter-actions, .filters, .chart-foot, .quiet-button, .hero-print, footer { display: none !important; }
+      .metric { min-height: 95px; box-shadow: none; }
+      .dashboard-grid { grid-template-columns: 1.5fr 1fr; }
+      .panel { box-shadow: none; break-inside: avoid; }
+      .activity-chart { gap: 0; }
+      .activity-row { min-height: 26px; }
+      .student-panel { break-before: page; box-shadow: none; }
+      .table-wrap { max-height: none; overflow: visible; }
+      @page { size: landscape; margin: 8mm; }
+      table { width: 100%; min-width: 0; table-layout: fixed; border-collapse: collapse; font-size: 6.5px; }
+      thead th { position: static; padding: 4px 2px; font-size: 6px; }
+      thead th.name-heading, tbody td.name-sticky { position: static; width: 105px; min-width: 105px; max-width: 105px; box-shadow: none; }
+      thead th.activity-heading, tbody td.activity-cell { width: auto; min-width: 0; max-width: none; }
+      thead th.final-heading, tbody td.final-grade-cell { width: 58px; min-width: 58px; }
+      thead th.absence-heading, tbody td.absence-cell { width: 40px; min-width: 40px; }
+      .activity-head-name { font-size: 6px; }
+      .activity-heading small { font-size: 5px; }
+      .grid-score { min-width: 0; padding: 1px 2px; font-size: 6px; }
+      tbody td { padding: 4px 2px; font-size: 6px; }
+      .student-id { flex-basis: 18px; width: 18px; height: 18px; font-size: 6px; }
+      .person-cell { gap: 3px; }
+      .person-name { font-size: 6px; }
+      .audit-grid { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">CSS</span><span>SEGUNDO PARCIAL<br>SEGUIMIENTO ACADÉMICO</span></div>
+        <div class="report-tag">Concentrado de actividades · 2026</div>
+      </div>
+      <div class="hero-main">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> CALIFICACIÓN ACUMULADA · SOBRE 70</div>
+          <h1>Actividades del<br><span>segundo parcial.</span></h1>
+          <p>Un panel para explorar el promedio del grupo, revisar las actividades y localizar rápidamente los resultados que requieren seguimiento.</p>
+          <div class="hero-meta">
+            <span class="meta-pill"><span class="meta-mark">◷</span> 13 oct — 05 nov 2026</span>
+            <span class="meta-pill"><span class="meta-mark">↗</span> 15 actividades · promedio final /70</span>
+            <button class="hero-print" id="printButton" type="button">Imprimir / guardar PDF</button>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Promedio del grupo como proporción del máximo">
+          <div class="score-orbit" id="scoreOrbit" style="--fill:90.6%">
+            <div class="orbit-copy"><strong id="heroPercent">90.6%</strong><span>del máximo</span><small id="heroAverage">63.4 / 70</small></div>
+          </div>
+          <div class="orbit-badge"><b id="heroStudents">40 estudiantes</b><span>en el concentrado</span></div>
+        </div>
+      </div>
+      <div class="hero-foot"><span>REGISTROS DE CALIFICACIÓN</span><span>LECTURA INTERACTIVA DEL GRUPO</span><span>DATOS DEL ARCHIVO CSV</span></div>
+    </header>
+
+    <main>
+      <aside class="privacy-note" role="note">
+        <span class="privacy-icon">i</span>
+        <div><b>Uso docente · privacidad.</b> Se conservaron los nombres, las calificaciones y las faltas del archivo; los correos se omitieron. Evita publicar o compartir abiertamente este HTML porque contiene datos escolares identificables.</div>
+      </aside>
+
+      <section class="metric-grid" aria-label="Indicadores principales">
+        <article class="metric"><div class="metric-top"><span>Alumnos en el archivo</span><span class="metric-symbol">01</span></div><div class="metric-value" id="kpiStudents">40</div><div class="metric-note">Registros con calificaciones</div></article>
+        <article class="metric"><div class="metric-top"><span>Actividades revisadas</span><span class="metric-symbol">02</span></div><div class="metric-value" id="kpiActivities">15</div><div class="metric-note">Del 13 de octubre al 5 de noviembre</div></article>
+        <article class="metric"><div class="metric-top"><span>Promedio del grupo</span><span class="metric-symbol">03</span></div><div class="metric-value"><span id="kpiAverage">63.4</span> <small>/ 70</small></div><div class="metric-note"><span id="kpiEquivalent">90.6%</span> del máximo posible</div></article>
+        <article class="metric"><div class="metric-top"><span>Con calificación de 70</span><span class="metric-symbol">04</span></div><div class="metric-value" id="kpiMax">14</div><div class="metric-note"><span id="kpiMedian">Mediana: 65 / 70</span></div></article>
+        <article class="metric"><div class="metric-top"><span>Faltas registradas</span><span class="metric-symbol">05</span></div><div class="metric-value" id="kpiAbsences">26</div><div class="metric-note" id="kpiAbsencesNote">15 alumnos con alguna falta</div></article>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="panel activity-panel" aria-labelledby="activityHeading">
+          <div class="panel-head">
+            <div><span class="section-kicker">01 / Actividades</span><h2 id="activityHeading">Promedio por actividad</h2><p class="panel-desc">Media de calificaciones del grupo, sobre 100. Selecciona una actividad para verla en la tabla.</p></div>
+            <button class="quiet-button" id="activityOrder" type="button">Orden: menor promedio</button>
+          </div>
+          <div class="activity-key"><span><i class="key-dot"></i> Promedio del grupo</span><span><i class="key-zero">0</i> registros con calificación cero</span></div>
+          <div class="activity-chart" id="activityChart" aria-label="Promedio por actividad"></div>
+          <div class="chart-foot"><span class="key-dot"></span><span>Actividad seleccionada: <strong id="selectedActivityNote">—</strong>. Los ceros se muestran como calificaciones registradas; el archivo no especifica si significan actividad no entregada.</span></div>
+        </section>
+
+        <aside class="sidebar">
+          <section class="panel distribution-panel" aria-labelledby="distributionHeading">
+            <span class="section-kicker">02 / Resultado final</span><h2 id="distributionHeading">Distribución sobre 70</h2><p class="panel-desc">Presiona un rango para filtrar la lista de alumnos.</p>
+            <div class="range-list" id="gradeDistribution"></div>
+            <div class="chart-foot"><span>Promedio <strong id="distributionAverage">—</strong></span><span>·</span><span>Rango <strong id="distributionRange">—</strong></span></div>
+          </section>
+          <section class="panel distribution-panel" aria-labelledby="absenceHeading">
+            <span class="section-kicker">03 / Asistencia</span><h2 id="absenceHeading">Faltas por alumno</h2><p class="panel-desc">Selecciona una cantidad para filtrar la lista.</p>
+            <div class="range-list" id="absenceDistribution"></div>
+            <div class="chart-foot"><span>Total <strong id="absenceTotal">—</strong></span><span>·</span><span>Promedio <strong id="absenceAverage">—</strong></span></div>
+          </section>
+          <section class="panel insight-panel" aria-labelledby="insightHeading">
+            <span class="section-kicker">04 / Lectura rápida</span><h2 id="insightHeading">Puntos a observar</h2>
+            <div class="insight" id="lowestInsight"></div>
+            <div class="insight" id="perfectInsight"></div>
+            <div class="insight" id="zeroInsight"></div>
+            <div class="insight" id="absenceInsight"></div>
+          </section>
+        </aside>
+      </div>
+
+      <section class="panel student-panel" id="studentPanel" aria-labelledby="studentHeading">
+        <div class="student-head">
+          <div><span class="section-kicker">04 / Consulta individual</span><h2 id="studentHeading">Lista completa de calificaciones</h2><p>La lista conserva el orden del archivo. Desplázate horizontalmente por las 15 actividades; la columna de nombres permanece fija.</p></div>
+          <div class="student-head-right"><span class="count-label" id="visibleCount">40 alumnos</span></div>
+        </div>
+        <div class="filters">
+          <div class="field"><label for="searchStudent">Buscar alumno</label><input class="control" id="searchStudent" type="search" placeholder="Escribe un nombre…" autocomplete="off"></div>
+          <div class="field"><label for="gradeFilter">Filtrar por promedio /70</label><select class="control" id="gradeFilter"><option value="all">Todos los rangos</option><option value="lt50">Menos de 50</option><option value="50-59">50 a 59</option><option value="60-69">60 a 69</option><option value="70">70 exactos</option></select></div>
+          <div class="field"><label for="absenceFilter">Filtrar por faltas</label><select class="control" id="absenceFilter"><option value="all">Cualquier cantidad</option><option value="0">0 faltas</option><option value="1">1 falta</option><option value="2">2 faltas</option><option value="3">3 faltas</option><option value="4">4 faltas</option></select></div>
+          <div class="field"><label for="sortSelect">Ordenar lista</label><select class="control" id="sortSelect"><option value="original" selected>Orden original del archivo</option><option value="gradeAsc">Promedio: menor a mayor</option><option value="gradeDesc">Promedio: mayor a menor</option><option value="name">Apellido A–Z</option><option value="zeros">Más ceros de actividades</option><option value="absencesDesc">Más faltas primero</option><option value="absencesAsc">Menos faltas primero</option><option value="activityAsc">Actividad señalada: menor a mayor</option><option value="activityDesc">Actividad señalada: mayor a menor</option></select></div>
+          <div class="filter-actions"><button class="button clear-button" id="clearFilters" type="button">Limpiar filtros</button></div>
+        </div>
+        <div class="table-wrap" aria-label="Tabla con desplazamiento horizontal y vertical">
+          <table>
+            <thead id="studentHeader"></thead>
+            <tbody id="studentRows"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState" hidden>No hay alumnos que coincidan. Cambia los filtros o la búsqueda.</div>
+        </div>
+        <div class="table-foot"><span id="tableSummary">—</span><span>La columna del alumno queda fija; desplázate por las 15 actividades, el promedio /70 y las faltas.</span></div>
+      </section>
+
+      <section class="audit-grid" aria-label="Notas sobre los datos">
+        <article class="audit-card"><span class="audit-check">✓</span><div><b>Comprobación del promedio final</b><p id="formulaAudit">—</p></div></article>
+        <article class="audit-card"><span class="audit-check">✓</span><div><b>Integridad del registro</b><p id="completenessAudit">—</p></div></article>
+        <article class="audit-card"><span class="audit-check">!</span><div><b>Cómo leer los ceros</b><p>El CSV registra valores 0, pero no explica si representan una entrega ausente o una calificación. El panel no los interpreta como faltas.</p></div></article>
+      </section>
+      <footer><span><strong>Fuente:</strong> CALIFICACION DE ACTIVIDADES SOBRE 70 SEGUNDO PARCIAL-2.csv · los correos no se incluyen.</span><span>Panel autónomo · no requiere conexión a internet.</span></footer>
+    </main>
+  </div>
+
+  <script>
+    const DB = {"activities":[{"label":"CSS y línea de tiempo","full":"QUE ES EL LENGUAJE DE PROGRAMACION CSS Y LINEA DE TIEMPO","date":"13 oct 2026"},{"label":"Método interno de CSS","full":"ACTIVIDAD AUTONOMA: METODO INTERNO EN CSS","date":"15 oct 2026"},{"label":"Sitios responsivos · lectura","full":"ACTIVIDAD AUTONOMA: SITIOS RESPONSIVOS (COMPROBACION DE LECTURA)","date":"15 oct 2026"},{"label":"Método externo de CSS","full":"PRACTICA AUTONOMA: METODO EXTERNO","date":"16 oct 2026"},{"label":"Diseños responsivos","full":"ACTIVIDAD AUTONOMA: DISEÑOS RESPONSIVOS.","date":"21 oct 2026"},{"label":"Pseudoclases · hover y transiciones","full":"ACTIVIDAD AUTONOMA: EJERCICIOS PSEUDO-CLASE, PASAR EL MOUSE POR ENCIMA Y TRANSICIONES.","date":"22 oct 2026"},{"label":"15 ejercicios · CSS en línea","full":"PRACTICA AUTONOMA 15 EJERCICIOS CON METODO EN LINEA DE CSS","date":"22 oct 2026"},{"label":"Animaciones · lectura y ejercicios","full":"ACTIVIDAD AUTONOMA: LECTURA DE COMPRESION Y EJERCICIOS OBJETOS CON MOVIMIENTO.","date":"22 oct 2026"},{"label":"Variables en CSS","full":"ACTIVIDAD AUTONOMA: REALIZA LOS EJERCICIOS DEL VARIABLES EN CSS","date":"28 oct 2026"},{"label":"Cuestionario de Flexbox","full":"CUESTIONARIO SOBRE EL TEMA FLEXBOX","date":"29 oct 2026"},{"label":"Práctica de Flexbox","full":"PRACTICA AUTONOMA EJERCICIOS DE FLEXBOX","date":"29 oct 2026"},{"label":"Ejercicios de galería de imágenes","full":"ACIVIDAD AUTONOMA EJERCICIOS DE GALERIA DE IMAGENES","date":"29 oct 2026"},{"label":"Cuestionario de galería","full":"ACTIVIDAD AUTONOMA: CUESTIONARIO DE TEMA GALERIA DE IMAGENES.","date":"29 oct 2026"},{"label":"Boceto","full":"BOCETO","date":"5 nov 2026"},{"label":"Gráfica de Gantt","full":"GRAFICA DE GANTT","date":"5 nov 2026"}],"students":[{"id":1,"name":"ALVAREZ OLIVARRA, ARIATHNA BETZABE","grade":46,"scores":[0,0,100,0,0,0,90,100,100,100,100,100,100,100,100],"absences":0},{"id":2,"name":"AMARILLAS ALMADA, ALFREDO","grade":69,"scores":[100,85,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":3,"name":"ARGÜELLES APODACA, EMILY YORLEI","grade":58,"scores":[100,80,100,0,70,0,95,100,100,100,100,100,100,100,100],"absences":0},{"id":4,"name":"ARZOLA SOTO, EDUARDO ALBERTO","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":5,"name":"BENITEZ MEDINA, ISMAEL","grade":69,"scores":[100,100,100,100,100,100,100,100,85,100,100,100,100,100,100],"absences":0},{"id":6,"name":"CORRAL CASTILLO, KENNETH ALEXANDER","grade":65,"scores":[100,100,100,100,100,100,100,100,100,0,100,100,100,100,100],"absences":0},{"id":7,"name":"COTA NUÑEZ, KEVIN","grade":63,"scores":[100,100,100,80,100,100,0,100,80,100,100,100,100,100,100],"absences":1},{"id":8,"name":"CUEVAS MARTINEZ, MIGUEL ANTONIO","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":9,"name":"DOMINGUEZ FELIX, MAURO DAMIAN","grade":62,"scores":[100,90,100,70,100,100,80,100,100,90,100,0,100,100,100],"absences":4},{"id":10,"name":"DOMINGUEZ LEYVA, JUAN EDUARDO","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":11,"name":"DUARTE RIOS, LUIS FRANCISCO","grade":58,"scores":[100,40,100,50,100,100,50,100,100,0,100,100,100,100,100],"absences":1},{"id":12,"name":"ELIOPULOS MONTAÑO, JORGE EMILIANO","grade":69,"scores":[100,100,100,85,100,100,100,100,100,100,100,100,100,100,100],"absences":2},{"id":13,"name":"ESQUER VALENZUELA, BRAYAN JESUS","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":14,"name":"GARATUZA HERNANDEZ, EMILIANO","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":15,"name":"GARCIA CAMACHO, MIGUEL ARMANDO","grade":65,"scores":[100,100,100,100,100,100,100,100,100,0,100,100,100,100,100],"absences":0},{"id":16,"name":"GARCIA ROJAS, DANIELA","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":17,"name":"GASTELUM FRANCO, DIEGO ALEJANDRO","grade":60,"scores":[100,90,100,0,100,100,100,100,100,100,100,100,0,100,100],"absences":0},{"id":18,"name":"GUTIÉRREZ CORONA, JUAN LUIS","grade":65,"scores":[100,100,100,100,100,100,100,100,100,100,0,100,100,100,100],"absences":0},{"id":19,"name":"HERNANDEZ OLEA, EMILIANO","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":1},{"id":20,"name":"HERRERA MORENO, KRISTHIAN ABDIEL","grade":61,"scores":[100,100,100,100,100,100,100,100,100,0,100,100,0,100,100],"absences":1},{"id":21,"name":"JIMENEZ CAMPOA, JUAN CARLOS","grade":65,"scores":[100,100,100,0,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":22,"name":"LARA LEYVA, JOAN ERNESTO","grade":65,"scores":[90,100,100,100,100,100,100,100,100,100,100,100,0,100,100],"absences":1},{"id":23,"name":"MACHADO BELTRAN, LILIA PAULINA","grade":64,"scores":[100,90,100,100,100,100,100,100,90,0,100,100,100,100,100],"absences":1},{"id":24,"name":"MEDRANO QUINTERO, MARIA CRISTINA","grade":33,"scores":[0,0,0,0,0,0,100,100,100,0,100,100,0,100,100],"absences":2},{"id":25,"name":"MENESES MONTIJO, ANNYA YARETHZI","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":26,"name":"MORENO VILLANUEVA, FRANCISCO YAHIR","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":27,"name":"NUñEZ BERNAL, JUAN MANUEL","grade":60,"scores":[100,100,100,100,100,100,90,100,0,0,100,100,100,100,100],"absences":1},{"id":28,"name":"OCHOA GALVEZ, DANIELL ALELY","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":29,"name":"OLIVA MARTINEZ, AYLIN ALEXIA","grade":65,"scores":[100,95,100,0,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":30,"name":"PERAL JIMENEZ, VALERIA GUADALUPE","grade":43,"scores":[100,50,100,0,30,50,0,100,100,0,100,100,0,100,100],"absences":0},{"id":31,"name":"PERAZA MARTINEZ, REGINA VALERIA","grade":61,"scores":[100,100,0,0,100,100,100,100,100,100,100,100,100,100,100],"absences":1},{"id":32,"name":"QUESNEY ESPINOZA, LESLIE","grade":45,"scores":[100,70,0,0,0,0,0,100,100,100,100,100,100,100,100],"absences":3},{"id":33,"name":"RABAGO SALINAS, JESUS ROBERTO","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":34,"name":"RAMIREZ VAZQUEZ, LUIS RUBEN","grade":69,"scores":[100,85,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":35,"name":"RIOS CAMPOS, ORLANDO ADRIEL","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":36,"name":"SALAZAR CASTRO, ANEL MICHELL","grade":48,"scores":[0,100,100,0,100,100,0,100,70,0,70,80,100,100,100],"absences":3},{"id":37,"name":"SAUCEDA BERNAL, ANGEL URIEL","grade":70,"scores":[100,100,100,90,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":38,"name":"VALDEZ LUJAN, DIANA MARIA","grade":65,"scores":[0,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":2},{"id":39,"name":"VALENZUELA DE LA VEGA, JORGE ADRIAN","grade":70,"scores":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"absences":0},{"id":40,"name":"ZEPEDA ALVAREZ, CARLOS ISAAC","grade":63,"scores":[100,100,100,80,100,100,0,100,100,90,100,80,100,100,100],"absences":2}]};
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+    const mean = (values) => values.reduce((sum, value) => sum + value, 0) / (values.length || 1);
+    const median = (values) => {
+      const sorted = [...values].sort((a, b) => a - b);
+      const half = Math.floor(sorted.length / 2);
+      return sorted.length % 2 ? sorted[half] : (sorted[half - 1] + sorted[half]) / 2;
+    };
+    const oneDecimal = (value) => Number(value).toLocaleString('es-MX', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const whole = (value) => Number(value).toLocaleString('es-MX', { maximumFractionDigits: 0 });
+    const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const fold = (value) => String(value).toLocaleLowerCase('es-MX').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const readableName = (value) => String(value).toLocaleLowerCase('es-MX').replace(/(^|[\s'-])([a-záéíóúüñ])/g, (match, sep, letter) => sep + letter.toLocaleUpperCase('es-MX'));
+    const activities = DB.activities;
+    const students = DB.students;
+    const activityStats = activities.map((activity, index) => {
+      const values = students.map((student) => student.scores[index]);
+      return { ...activity, index, average: mean(values), zeros: values.filter((value) => value === 0).length, perfect: values.filter((value) => value === 100).length };
+    });
+    const lowestActivity = [...activityStats].sort((a, b) => a.average - b.average)[0];
+    let selectedActivity = lowestActivity.index;
+    let sortActivitiesByLow = true;
+
+    function studentLabel(student) {
+      return student.name;
+    }
+    function scoreClass(score) {
+      if (score < 50) return 'low';
+      if (score < 60) return 'mid';
+      if (score === 70) return 'max';
+      return '';
+    }
+    function gradeMatches(score, filter) {
+      if (filter === 'lt50') return score < 50;
+      if (filter === '50-59') return score >= 50 && score < 60;
+      if (filter === '60-69') return score >= 60 && score < 70;
+      if (filter === '70') return score === 70;
+      return true;
+    }
+    function initMetrics() {
+      const finals = students.map((student) => student.grade);
+      const groupAverage = mean(finals);
+      const med = median(finals);
+      const maxCount = finals.filter((score) => score === 70).length;
+      const maximum = Math.max(...finals);
+      const minimum = Math.min(...finals);
+      const below50 = finals.filter((score) => score < 50).length;
+      const ratio = Math.min(100, groupAverage / 70 * 100);
+      $('#kpiStudents').textContent = whole(students.length);
+      $('#kpiActivities').textContent = whole(activities.length);
+      $('#kpiAverage').textContent = oneDecimal(groupAverage);
+      $('#kpiEquivalent').textContent = `${oneDecimal(ratio)}%`;
+      $('#kpiMax').textContent = whole(maxCount);
+      $('#kpiMedian').textContent = `Mediana: ${oneDecimal(med).replace(/,0$/, '')} / 70`;
+      const absenceTotal = students.reduce((sum, student) => sum + student.absences, 0);
+      const withAbsences = students.filter((student) => student.absences > 0).length;
+      const maxAbsences = Math.max(...students.map((student) => student.absences));
+      $('#kpiAbsences').textContent = whole(absenceTotal);
+      $('#kpiAbsencesNote').textContent = `${withAbsences} alumnos con faltas · máximo ${maxAbsences}`;
+      $('#absenceTotal').textContent = whole(absenceTotal);
+      $('#absenceAverage').textContent = `${oneDecimal(absenceTotal / students.length)} por alumno`;
+      $('#heroPercent').textContent = `${oneDecimal(ratio)}%`;
+      $('#heroAverage').textContent = `${oneDecimal(groupAverage)} / 70`;
+      $('#heroStudents').textContent = `${whole(students.length)} estudiantes`;
+      $('#scoreOrbit').style.setProperty('--fill', `${ratio}%`);
+      $('#distributionAverage').textContent = `${oneDecimal(groupAverage)} / 70`;
+      $('#distributionRange').textContent = `${whole(minimum)}–${whole(maximum)} / 70`;
+      $('#formulaAudit').textContent = `En ${students.filter((student) => Math.round(mean(student.scores) * .7) === student.grade).length} de ${students.length} alumnos, la columna “Promedio sobre 70” coincide con el promedio simple de las 15 actividades × 0.70, redondeado al entero.`;
+      const scores = students.flatMap((student) => student.scores);
+      const blanks = scores.filter((value) => value === null || value === undefined || Number.isNaN(value)).length;
+      const zeros = scores.filter((value) => value === 0).length;
+      const completeAbsences = students.filter((student) => Number.isFinite(student.absences)).length;
+      $('#completenessAudit').textContent = `${students.length} alumnos × ${activities.length} actividades = ${scores.length} calificaciones; ${blanks} celdas vacías, ${zeros} ceros y ${completeAbsences}/${students.length} datos de faltas.`;
+      const fullMarks = activityStats.filter((activity) => activity.average === 100 && activity.perfect === students.length);
+      const zeroTotal = scores.filter((value) => value === 0).length;
+      const percentZeros = (zeroTotal / scores.length * 100);
+      const secondLowest = [...activityStats].sort((a,b)=>a.average-b.average)[1];
+      $('#lowestInsight').innerHTML = `<span class="insight-mark">↓</span><div><b>Actividad con promedio más bajo</b><p>${escapeHTML(lowestActivity.label)}: ${oneDecimal(lowestActivity.average)} / 100 y ${lowestActivity.zeros} ceros registrados. Le sigue ${escapeHTML(secondLowest.label)} (${oneDecimal(secondLowest.average)} / 100).</p></div>`;
+      $('#perfectInsight').innerHTML = `<span class="insight-mark">100</span><div><b>${fullMarks.length} actividades sin variación</b><p>${fullMarks.length ? fullMarks.map((activity) => escapeHTML(activity.label)).join(', ') : 'No hay actividades con 100 para todo el grupo'}: todos los registros tienen 100 / 100.</p></div>`;
+      $('#zeroInsight').innerHTML = `<span class="insight-mark">0</span><div><b>${zeroTotal} ceros (${oneDecimal(percentZeros)}% de los registros)</b><p>El archivo no aclara si un 0 significa falta de entrega; aquí se reporta sólo como calificación registrada.</p></div>`;
+      $('#absenceInsight').innerHTML = `<span class="insight-mark">F</span><div><b>${absenceTotal} faltas registradas</b><p>${withAbsences} de ${students.length} alumnos tienen al menos una; ${students.length - withAbsences} tienen cero. El máximo registrado es ${maxAbsences}.</p></div>`;
+    }
+    function renderTableHeader() {
+      $('#studentHeader').innerHTML = `<tr>
+        <th class="name-heading" scope="col">Apellido, nombre</th>
+        ${activities.map((activity, index) => `<th class="activity-heading ${index === selectedActivity ? 'is-selected' : ''}" scope="col" data-activity-col="${index}" title="${escapeHTML(activity.full)}"><span class="activity-head-name">${escapeHTML(activity.full)}</span><small>${escapeHTML(activity.date)}</small></th>`).join('')}
+        <th class="final-heading" scope="col">Promedio final<small>sobre 70</small></th>
+        <th class="absence-heading" scope="col">Faltas</th>
+      </tr>`;
+    }
+    function updateSelectedActivity(scrollToColumn = false) {
+      const activity = activityStats[selectedActivity];
+      $('#selectedActivityNote').textContent = `${activity.label} (${activity.date}), promedio ${oneDecimal(activity.average)} / 100`;
+      renderTableHeader();
+      renderActivityChart();
+      renderStudents();
+      if (scrollToColumn) {
+        $('#studentPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        requestAnimationFrame(() => {
+          const wrap = $('.table-wrap');
+          const column = wrap.querySelector(`thead [data-activity-col="${selectedActivity}"]`);
+          const nameColumn = wrap.querySelector('.name-heading');
+          if (!column || !nameColumn) return;
+          const offset = column.getBoundingClientRect().left - wrap.getBoundingClientRect().left - nameColumn.getBoundingClientRect().width - 10;
+          wrap.scrollBy({ left: offset, behavior: 'smooth' });
+        });
+      }
+    }
+    function renderActivityChart() {
+      const list = [...activityStats];
+      if (sortActivitiesByLow) list.sort((a,b) => a.average - b.average || a.index - b.index);
+      else list.sort((a,b) => a.index - b.index);
+      $('#activityChart').innerHTML = list.map((activity) => `
+        <button class="activity-row ${activity.index === selectedActivity ? 'is-selected' : ''}" type="button" data-activity="${activity.index}" aria-pressed="${activity.index === selectedActivity}" title="${escapeHTML(activity.full)} · promedio ${oneDecimal(activity.average)} / 100 · ${activity.zeros} ceros">
+          <span class="activity-index">${String(activity.index + 1).padStart(2,'0')}</span>
+          <span class="activity-copy"><b>${escapeHTML(activity.label)}</b><small>${escapeHTML(activity.date)}</small></span>
+          <span class="activity-track"><span class="activity-fill" style="width:${Math.max(0,Math.min(100,activity.average))}%"></span></span>
+          <span class="activity-average">${oneDecimal(activity.average)}</span>
+          <span class="zero-chip ${activity.zeros ? 'has-zeros' : ''}">${activity.zeros} ceros</span>
+        </button>`).join('');
+      $('#activityOrder').textContent = sortActivitiesByLow ? 'Orden: menor promedio' : 'Orden: fecha del archivo';
+    }
+    const gradeBins = [
+      { key: 'lt50', label: 'Menos de 50', match: (score) => score < 50 },
+      { key: '50-59', label: '50 a 59', match: (score) => score >= 50 && score < 60 },
+      { key: '60-69', label: '60 a 69', match: (score) => score >= 60 && score < 70 },
+      { key: '70', label: '70 exactos', match: (score) => score === 70 }
+    ];
+    function renderDistribution() {
+      const finals = students.map((student) => student.grade);
+      const activeFilter = $('#gradeFilter').value;
+      $('#gradeDistribution').innerHTML = gradeBins.map((bin) => {
+        const count = finals.filter(bin.match).length;
+        const pct = count / students.length * 100;
+        return `<button class="range-row ${activeFilter === bin.key ? 'is-active' : ''}" type="button" data-grade-filter="${bin.key}" aria-pressed="${activeFilter === bin.key}">
+          <span class="range-label">${bin.label}</span><span class="range-track"><span class="range-fill" style="width:${pct}%"></span></span><span class="range-count">${count}</span><span class="range-pct">${oneDecimal(pct)}%</span>
+        </button>`;
+      }).join('');
+    }
+    function renderAbsenceDistribution() {
+      const max = Math.max(...students.map((student) => student.absences));
+      const filter = $('#absenceFilter').value;
+      const values = Array.from({length: max + 1}, (_, index) => index);
+      $('#absenceDistribution').innerHTML = values.map((value) => {
+        const count = students.filter((student) => student.absences === value).length;
+        const pct = count / students.length * 100;
+        return `<button class="range-row ${filter === String(value) ? 'is-active' : ''}" type="button" data-absence-filter="${value}" aria-pressed="${filter === String(value)}">
+          <span class="range-label">${value} ${value === 1 ? 'falta' : 'faltas'}</span><span class="range-track"><span class="range-fill" style="width:${pct}%"></span></span><span class="range-count">${count}</span><span class="range-pct">${oneDecimal(pct)}%</span>
+        </button>`;
+      }).join('');
+    }
+    function renderStudents() {
+      const query = fold($('#searchStudent').value.trim());
+      const gradeFilter = $('#gradeFilter').value;
+      const absenceFilter = $('#absenceFilter').value;
+      const sortMode = $('#sortSelect').value;
+      const activity = selectedActivity;
+      let visible = students.filter((student) => {
+        const searchText = fold(`${student.name} ${student.id}`);
+        const matchesAbsences = absenceFilter === 'all' || student.absences === Number(absenceFilter);
+        return (!query || searchText.includes(query)) && gradeMatches(student.grade, gradeFilter) && matchesAbsences;
+      });
+      visible.sort((a,b) => {
+        if (sortMode === 'original') return a.id - b.id;
+        if (sortMode === 'gradeDesc') return b.grade - a.grade || a.id - b.id;
+        if (sortMode === 'name') return a.name.localeCompare(b.name, 'es-MX');
+        if (sortMode === 'zeros') return b.scores.filter(x => x === 0).length - a.scores.filter(x => x === 0).length || a.id - b.id;
+        if (sortMode === 'absencesDesc') return b.absences - a.absences || a.id - b.id;
+        if (sortMode === 'absencesAsc') return a.absences - b.absences || a.id - b.id;
+        if (sortMode === 'activityAsc') return a.scores[activity] - b.scores[activity] || a.id - b.id;
+        if (sortMode === 'activityDesc') return b.scores[activity] - a.scores[activity] || a.id - b.id;
+        return a.grade - b.grade || a.id - b.id;
+      });
+      const body = $('#studentRows');
+      body.innerHTML = visible.map((student) => {
+        const activityCells = student.scores.map((score, index) => `<td class="activity-cell ${index === activity ? 'selected-column' : ''}" data-activity-col="${index}"><span class="grid-score ${score === 0 ? 'zero' : score === 100 ? 'perfect' : ''}">${score}</span></td>`).join('');
+        return `<tr>
+          <td class="name-sticky"><div class="person-cell"><span class="student-id">${String(student.id).padStart(2,'0')}</span><span class="person-name" title="${escapeHTML(studentLabel(student))}">${escapeHTML(studentLabel(student))}</span></div></td>
+          ${activityCells}
+          <td class="final-grade-cell"><span class="score-pill ${scoreClass(student.grade)}">${student.grade}<small>/70</small></span></td>
+          <td class="absence-cell"><span class="absence-pill ${student.absences >= 3 ? 'high' : student.absences > 0 ? 'some' : ''}">${student.absences}</span></td>
+        </tr>`;
+      }).join('');
+      $('#emptyState').hidden = visible.length !== 0;
+      $('#visibleCount').textContent = `${visible.length} de ${students.length} alumnos`;
+      $('#tableSummary').textContent = `${visible.length} filas visibles · ${activities.length} actividades + promedio /70 + faltas · orden: ${$('#sortSelect').selectedOptions[0].textContent.toLocaleLowerCase('es-MX')}`;
+      renderDistribution();
+      renderAbsenceDistribution();
+    }
+    // Inicialización de controles y eventos
+    initMetrics();
+    updateSelectedActivity();
+    $('#searchStudent').addEventListener('input', renderStudents);
+    $('#gradeFilter').addEventListener('change', renderStudents);
+    $('#absenceFilter').addEventListener('change', renderStudents);
+    $('#sortSelect').addEventListener('change', renderStudents);
+    $('#activityOrder').addEventListener('click', () => { sortActivitiesByLow = !sortActivitiesByLow; renderActivityChart(); });
+    $('#activityChart').addEventListener('click', (event) => {
+      const row = event.target.closest('[data-activity]');
+      if (!row) return;
+      selectedActivity = Number(row.dataset.activity);
+      updateSelectedActivity(true);
+    });
+    $('#gradeDistribution').addEventListener('click', (event) => {
+      const row = event.target.closest('[data-grade-filter]');
+      if (!row) return;
+      $('#gradeFilter').value = row.dataset.gradeFilter;
+      renderStudents();
+      $('#studentPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    $('#absenceDistribution').addEventListener('click', (event) => {
+      const row = event.target.closest('[data-absence-filter]');
+      if (!row) return;
+      $('#absenceFilter').value = row.dataset.absenceFilter;
+      renderStudents();
+      $('#studentPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    $('#clearFilters').addEventListener('click', () => {
+      $('#searchStudent').value = '';
+      $('#gradeFilter').value = 'all';
+      $('#absenceFilter').value = 'all';
+      $('#sortSelect').value = 'original';
+      renderStudents();
+    });
+    $('#printButton')?.addEventListener('click', () => window.print());
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a587722698a50432',t:'MTc5NDMzODc1NQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a587722698a50432',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
